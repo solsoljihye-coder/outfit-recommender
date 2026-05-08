@@ -10,74 +10,132 @@
   <title>Outfit</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { min-height: 100vh; background: #0f0f0f; color: #f0ece4; font-family: Georgia, serif; display: flex; justify-content: center; padding: 44px 16px 60px; }
-    .container { width: 100%; max-width: 420px; }
-    .top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-    .subtitle { font-size: 11px; color: #7a7570; font-family: sans-serif; letter-spacing: 0.12em; text-transform: uppercase; }
-    .settings-btn { background: transparent; border: none; color: #7a7570; font-size: 18px; cursor: pointer; padding: 0; }
-    h1 { font-size: 36px; font-weight: 400; letter-spacing: 0.08em; text-align: center; margin-bottom: 6px; text-transform: uppercase; }
-    .desc { font-size: 13px; color: #7a7570; font-family: sans-serif; text-align: center; margin-bottom: 24px; }
-    .fetch-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .fetch-status { font-size: 12px; font-family: sans-serif; color: #7a7570; }
-    .fetch-status.success { color: #c8a97e; }
-    .fetch-status.error { color: #e07b54; }
-    .refresh-btn { background: transparent; color: #c8a97e; border: 1px solid rgba(200,169,126,0.3); border-radius: 6px; font-size: 12px; font-family: sans-serif; padding: 5px 12px; cursor: pointer; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-    .field-label { font-size: 11px; color: #7a7570; font-family: sans-serif; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-    input, select { background: rgba(255,255,255,0.06); border: 1px solid rgba(200,169,126,0.25); border-radius: 8px; color: #f0ece4; font-size: 16px; padding: 10px 12px; width: 100%; outline: none; font-family: Georgia, serif; -webkit-appearance: none; }
-    input:focus, select:focus { border-color: #c8a97e; }
-    select option { background: #1a1a1a; color: #f0ece4; }
-    .range-bar { font-size: 12px; font-family: sans-serif; padding: 7px 12px; background: rgba(200,169,126,0.05); border-radius: 6px; margin-bottom: 10px; }
-    .rain-bar { font-size: 12px; font-family: sans-serif; padding: 7px 12px; border-radius: 6px; margin-bottom: 10px; }
-    .rain-bar.high { background: rgba(100,149,237,0.1); color: #6495ed; border: 1px solid rgba(100,149,237,0.2); }
-    .rain-bar.mid { background: rgba(200,169,126,0.05); color: #c8a97e; }
-    .recommend-btn { width: 100%; background: #c8a97e; color: #0f0f0f; border: none; border-radius: 10px; font-size: 15px; font-family: Georgia, serif; font-weight: bold; padding: 14px; cursor: pointer; margin-top: 8px; letter-spacing: 0.05em; }
-    .recommend-btn:active { background: #b8996e; }
-    .error-msg { color: #e07b54; font-size: 13px; font-family: sans-serif; margin-bottom: 8px; }
-    .results { margin-top: 28px; }
-    .results-title { font-size: 11px; color: #7a7570; font-family: sans-serif; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
-    .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(200,169,126,0.18); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .chip { display: inline-block; background: rgba(200,169,126,0.12); border: 1px solid rgba(200,169,126,0.3); color: #c8a97e; font-size: 11px; font-family: sans-serif; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; }
-    .card-note { font-size: 11px; color: #7a7570; font-family: sans-serif; }
-    .items-row { display: flex; gap: 10px; }
-    .item-box { flex: 1; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 12px; }
-    .item-label { font-size: 10px; color: #7a7570; text-transform: uppercase; letter-spacing: 0.1em; font-family: sans-serif; margin-bottom: 5px; }
-    .item-name { font-size: 16px; }
-    .umbrella-card { background: rgba(100,149,237,0.08); border: 1px solid rgba(100,149,237,0.25); border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; }
-    .umbrella-title { font-size: 13px; font-family: sans-serif; color: #6495ed; margin-bottom: 8px; font-weight: bold; }
-    .rain-hours { font-size: 12px; font-family: sans-serif; color: #a0b4d0; line-height: 1.8; }
-    .tip { padding: 12px 14px; background: rgba(200,169,126,0.05); border-radius: 8px; font-size: 12px; color: #7a7570; font-family: sans-serif; line-height: 1.6; }
-    .hourly-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
-    .hour-cell { background: rgba(255,255,255,0.03); border-radius: 6px; padding: 8px 4px; text-align: center; }
-    .hour-time { font-size: 10px; color: #7a7570; font-family: sans-serif; margin-bottom: 3px; }
-    .hour-prob { font-size: 13px; font-family: sans-serif; }
-    .hour-prob.wet { color: #6495ed; }
-    .hour-prob.dry { color: #7a7570; }
-    .section-label { font-size: 11px; color: #7a7570; font-family: sans-serif; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; margin-top: 16px; }
 
 ```
+body {
+  min-height: 100vh;
+  background: #0f0f0f;
+  color: #f0ece4;
+  font-family: Georgia, serif;
+  display: flex;
+  justify-content: center;
+  padding: 44px 16px 60px;
+}
+
+.container { width: 100%; max-width: 420px; }
+
+.top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+.subtitle { font-size: 11px; color: #7a7570; font-family: sans-serif; letter-spacing: 0.12em; text-transform: uppercase; }
+.settings-btn { background: transparent; border: none; color: #7a7570; font-size: 18px; cursor: pointer; padding: 0; }
+
+h1 { font-size: 36px; font-weight: 400; letter-spacing: 0.08em; text-align: center; margin-bottom: 6px; text-transform: uppercase; }
+.desc { font-size: 13px; color: #7a7570; font-family: sans-serif; text-align: center; margin-bottom: 24px; }
+
+.fetch-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.fetch-status { font-size: 12px; font-family: sans-serif; color: #7a7570; }
+.fetch-status.success { color: #c8a97e; }
+.fetch-status.error { color: #e07b54; }
+.refresh-btn { background: transparent; color: #c8a97e; border: 1px solid rgba(200,169,126,0.3); border-radius: 6px; font-size: 12px; font-family: sans-serif; padding: 5px 12px; cursor: pointer; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.field-label { font-size: 11px; color: #7a7570; font-family: sans-serif; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+
+input, select {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(200,169,126,0.25);
+  border-radius: 8px;
+  color: #f0ece4;
+  font-size: 16px;
+  padding: 10px 12px;
+  width: 100%;
+  outline: none;
+  font-family: Georgia, serif;
+  -webkit-appearance: none;
+}
+input:focus, select:focus { border-color: #c8a97e; }
+select option { background: #1a1a1a; color: #f0ece4; }
+
+.range-bar { font-size: 12px; font-family: sans-serif; padding: 7px 12px; background: rgba(200,169,126,0.05); border-radius: 6px; margin-bottom: 10px; }
+
+.rain-bar { font-size: 12px; font-family: sans-serif; padding: 7px 12px; border-radius: 6px; margin-bottom: 10px; }
+.rain-bar.high { background: rgba(100,149,237,0.1); color: #6495ed; border: 1px solid rgba(100,149,237,0.2); }
+.rain-bar.mid { background: rgba(200,169,126,0.05); color: #c8a97e; }
+
+.section-label { font-size: 11px; color: #7a7570; font-family: sans-serif; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; margin-top: 16px; }
+.hourly-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+.hour-cell { background: rgba(255,255,255,0.03); border-radius: 6px; padding: 8px 4px; text-align: center; }
+.hour-time { font-size: 10px; color: #7a7570; font-family: sans-serif; margin-bottom: 3px; }
+.hour-prob { font-size: 13px; font-family: sans-serif; }
+.hour-prob.wet { color: #6495ed; }
+.hour-prob.dry { color: #7a7570; }
+
+.recommend-btn {
+  width: 100%;
+  background: #c8a97e;
+  color: #0f0f0f;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: Georgia, serif;
+  font-weight: bold;
+  padding: 14px;
+  cursor: pointer;
+  margin-top: 8px;
+  letter-spacing: 0.05em;
+}
+.recommend-btn:active { background: #b8996e; }
+
+.error-msg { color: #e07b54; font-size: 13px; font-family: sans-serif; margin-bottom: 8px; }
+
+.results { margin-top: 28px; }
+.results-title { font-size: 11px; color: #7a7570; font-family: sans-serif; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+
+.card { background: rgba(255,255,255,0.04); border: 1px solid rgba(200,169,126,0.18); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.chip { display: inline-block; background: rgba(200,169,126,0.12); border: 1px solid rgba(200,169,126,0.3); color: #c8a97e; font-size: 11px; font-family: sans-serif; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; }
+.card-note { font-size: 11px; color: #7a7570; font-family: sans-serif; }
+.items-row { display: flex; gap: 10px; }
+.item-box { flex: 1; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 12px; }
+.item-label { font-size: 10px; color: #7a7570; text-transform: uppercase; letter-spacing: 0.1em; font-family: sans-serif; margin-bottom: 5px; }
+.item-name { font-size: 16px; }
+
+.umbrella-card { background: rgba(100,149,237,0.08); border: 1px solid rgba(100,149,237,0.25); border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; }
+.umbrella-title { font-size: 13px; font-family: sans-serif; color: #6495ed; margin-bottom: 8px; font-weight: bold; }
+.rain-hours { font-size: 12px; font-family: sans-serif; color: #a0b4d0; line-height: 1.8; }
+
+.tip { padding: 12px 14px; background: rgba(200,169,126,0.05); border-radius: 8px; font-size: 12px; color: #7a7570; font-family: sans-serif; line-height: 1.6; }
+
 /* Settings */
-.settings-panel { display: none; width: 100%; background: #0f0f0f; padding: 44px 0 60px; }
-.settings-panel.open { display: block; }
+.settings-wrap {
+  display: none;
+  width: 100%;
+  max-width: 420px;
+}
 .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
 .settings-title { font-size: 24px; font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase; }
 .close-btn { background: transparent; border: none; color: #c8a97e; font-size: 22px; cursor: pointer; }
+
 .section-title { font-size: 11px; color: #7a7570; font-family: sans-serif; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
 .warmth-hint { font-size: 11px; color: #7a7570; font-family: sans-serif; margin-bottom: 10px; line-height: 1.5; }
+
 .item-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(200,169,126,0.1); border-radius: 8px; margin-bottom: 8px; }
 .item-row-warmth { font-size: 11px; color: #7a7570; font-family: sans-serif; margin-right: 12px; }
 .delete-btn { background: transparent; border: none; color: #7a7570; font-size: 18px; cursor: pointer; padding: 0 4px; }
+
 .add-row { display: flex; gap: 8px; margin-top: 10px; margin-bottom: 28px; }
 .add-input { flex: 2; background: rgba(255,255,255,0.06); border: 1px solid rgba(200,169,126,0.25); border-radius: 8px; color: #f0ece4; font-size: 15px; padding: 10px 12px; outline: none; font-family: Georgia, serif; }
 .warmth-input { flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(200,169,126,0.25); border-radius: 8px; color: #f0ece4; font-size: 15px; padding: 10px 12px; outline: none; font-family: Georgia, serif; }
 .add-btn { background: rgba(200,169,126,0.15); border: 1px solid rgba(200,169,126,0.3); color: #c8a97e; border-radius: 8px; font-size: 20px; padding: 0 14px; cursor: pointer; }
+
 .save-btn { width: 100%; background: #c8a97e; color: #0f0f0f; border: none; border-radius: 10px; font-size: 15px; font-family: Georgia, serif; font-weight: bold; padding: 14px; cursor: pointer; margin-top: 8px; letter-spacing: 0.05em; }
 ```
 
   </style>
 </head>
 <body>
+
+  <!-- Main View -->
+
   <div class="container" id="mainView">
     <div class="top-row">
       <div class="subtitle">SOL</div>
@@ -98,7 +156,8 @@
 </div>
 <div class="grid-2">
   <div><div class="field-label">바람 (m/s)</div><input type="number" id="wind" placeholder="예: 3" /></div>
-  <div><div class="field-label">날씨</div>
+  <div>
+    <div class="field-label">날씨</div>
     <select id="condition" onchange="updateTitle()">
       <option value="sunny">☀️ 맑음</option>
       <option value="partly">⛅ 구름조금</option>
@@ -123,30 +182,36 @@
 
   </div>
 
-  <div class="settings-panel" id="settingsPanel">
-    <div style="max-width:420px;margin:0 auto;">
-      <div class="settings-header">
-        <div class="settings-title">My Wardrobe</div>
-        <button class="close-btn" onclick="closeSettings()">✕</button>
-      </div>
-      <div class="section-title">겉옷</div>
-      <div class="warmth-hint">따뜻함 1(얇음) ~ 10(두꺼움) / 방수여부 체크</div>
-      <div id="outerList"></div>
-      <div class="add-row">
-        <input class="add-input" id="newOuterName" placeholder="겉옷 이름" />
-        <input class="warmth-input" id="newOuterWarmth" type="number" placeholder="1~10" min="1" max="10" />
-        <button class="add-btn" onclick="addOuter()">+</button>
-      </div>
-      <div class="section-title">하의</div>
-      <div class="warmth-hint">따뜻함 1(얇음) ~ 10(두꺼움)</div>
-      <div id="bottomList"></div>
-      <div class="add-row">
-        <input class="add-input" id="newBottomName" placeholder="하의 이름" />
-        <input class="warmth-input" id="newBottomWarmth" type="number" placeholder="1~10" min="1" max="10" />
-        <button class="add-btn" onclick="addBottom()">+</button>
-      </div>
-      <button class="save-btn" onclick="saveAndClose()">저장하고 닫기</button>
+  <!-- Settings View -->
+
+  <div class="settings-wrap" id="settingsView">
+    <div class="settings-header">
+      <div class="settings-title">My Wardrobe</div>
+      <button class="close-btn" onclick="closeSettings()">✕</button>
     </div>
+
+```
+<div class="section-title">겉옷</div>
+<div class="warmth-hint">따뜻함 1(얇음) ~ 10(두꺼움) · 💧 방수</div>
+<div id="outerList"></div>
+<div class="add-row">
+  <input class="add-input" id="newOuterName" placeholder="겉옷 이름" />
+  <input class="warmth-input" id="newOuterWarmth" type="number" placeholder="1~10" min="1" max="10" />
+  <button class="add-btn" onclick="addOuter()">+</button>
+</div>
+
+<div class="section-title">하의</div>
+<div class="warmth-hint">따뜻함 1(얇음) ~ 10(두꺼움)</div>
+<div id="bottomList"></div>
+<div class="add-row">
+  <input class="add-input" id="newBottomName" placeholder="하의 이름" />
+  <input class="warmth-input" id="newBottomWarmth" type="number" placeholder="1~10" min="1" max="10" />
+  <button class="add-btn" onclick="addBottom()">+</button>
+</div>
+
+<button class="save-btn" onclick="saveAndClose()">저장하고 닫기</button>
+```
+
   </div>
 
   <script>
@@ -181,10 +246,19 @@
       try {
         const o = localStorage.getItem("outerwear");
         const b = localStorage.getItem("bottoms");
-        return { outerwear: o ? JSON.parse(o) : DEFAULT_OUTERWEAR, bottoms: b ? JSON.parse(b) : DEFAULT_BOTTOMS };
-      } catch(e) { return { outerwear: DEFAULT_OUTERWEAR, bottoms: DEFAULT_BOTTOMS }; }
+        return {
+          outerwear: o ? JSON.parse(o) : DEFAULT_OUTERWEAR,
+          bottoms: b ? JSON.parse(b) : DEFAULT_BOTTOMS
+        };
+      } catch(e) {
+        return { outerwear: DEFAULT_OUTERWEAR, bottoms: DEFAULT_BOTTOMS };
+      }
     }
-    function saveWardrobe(o, b) { localStorage.setItem("outerwear", JSON.stringify(o)); localStorage.setItem("bottoms", JSON.stringify(b)); }
+
+    function saveWardrobe(o, b) {
+      localStorage.setItem("outerwear", JSON.stringify(o));
+      localStorage.setItem("bottoms", JSON.stringify(b));
+    }
 
     let wardrobe = loadWardrobe();
     let editOuterwear = [], editBottoms = [];
@@ -220,22 +294,19 @@
       else if (avg <= 25) bottomScore = 3;
       else bottomScore = 1.5;
 
-      // 비 올 때 방수 겉옷 우선
       let outerPool = [...wardrobe.outerwear];
       if (rain >= 50) {
-        const waterproofItems = outerPool.filter(i => i.waterproof);
-        if (waterproofItems.length > 0) {
-          outerPool = [...waterproofItems, ...outerPool.filter(i => !i.waterproof)];
-        }
+        const wp = outerPool.filter(i => i.waterproof);
+        if (wp.length > 0) outerPool = [...wp, ...outerPool.filter(i => !i.waterproof)];
       }
 
       const outers = getClosest(outerPool, outerScore, 3);
       const bottoms = getClosest(wardrobe.bottoms, bottomScore, 3);
       const combos = [];
 
+      const rainNote = rain >= 50 ? "우산 필수 ☂️" : rain >= 30 ? "우산 챙기세요" : null;
       const windNote = wind > 3 ? "바람 있어요 🌬️" : null;
       const rangeNote = range >= 13 ? "일교차 주의!" : null;
-      const rainNote = rain >= 50 ? "우산 필수 ☂️" : rain >= 30 ? "우산 챙기세요" : null;
       const mainNote = rainNote || windNote || rangeNote;
 
       combos.push({ label: range >= 13 ? "아침 외출 추천" : "기본 추천", outer: outers[0], bottom: bottoms[0], note: mainNote });
@@ -245,7 +316,9 @@
       return combos;
     }
 
-    function updateTitle() { document.getElementById("title").textContent = "Outfit " + EMOJIS[document.getElementById("condition").value]; }
+    function updateTitle() {
+      document.getElementById("title").textContent = "Outfit " + EMOJIS[document.getElementById("condition").value];
+    }
 
     function updateRange() {
       const min = parseFloat(document.getElementById("minTemp").value);
@@ -256,16 +329,14 @@
         bar.style.display = "block";
         bar.style.color = range >= 13 ? "#e07b54" : "#c8a97e";
         bar.textContent = "일교차 " + range + "도" + (range >= 13 ? " ⚠️ 많이 벌어졌어요" : "");
-      } else { bar.style.display = "none"; }
+      } else {
+        bar.style.display = "none";
+      }
     }
 
     function showHourlyRain(hourlyData) {
       if (!hourlyData || hourlyData.length === 0) return;
       const now = new Date().getHours();
-      const section = document.getElementById("hourlySection");
-      const grid = document.getElementById("hourlyGrid");
-
-      // Show next 8 hours
       const slots = [];
       for (let i = 0; i < 8; i++) {
         const h = (now + i) % 24;
@@ -273,30 +344,23 @@
         slots.push({ hour: h, prob });
       }
 
-      grid.innerHTML = slots.map(s => `
-        <div class="hour-cell">
-          <div class="hour-time">${s.hour}시</div>
-          <div class="hour-prob ${s.prob >= 30 ? 'wet' : 'dry'}">${s.prob}%</div>
-        </div>
-      `).join("");
+      document.getElementById("hourlyGrid").innerHTML = slots.map(s =>
+        '<div class="hour-cell"><div class="hour-time">' + s.hour + '시</div><div class="hour-prob ' + (s.prob >= 30 ? 'wet' : 'dry') + '">' + s.prob + '%</div></div>'
+      ).join("");
+      document.getElementById("hourlySection").style.display = "block";
 
-      section.style.display = "block";
-
-      // Rain summary bar
       const rainBar = document.getElementById("rainBar");
-      const highRainSlots = slots.filter(s => s.prob >= 50);
+      const highSlots = slots.filter(s => s.prob >= 50);
       maxRainProb = Math.max(...slots.map(s => s.prob));
 
-      if (highRainSlots.length > 0) {
-        const startH = highRainSlots[0].hour;
-        const endH = highRainSlots[highRainSlots.length - 1].hour;
+      if (highSlots.length > 0) {
         rainBar.className = "rain-bar high";
         rainBar.style.display = "block";
-        rainBar.textContent = `🌧️ ${startH}시~${endH}시 강수확률 높아요 — 우산 챙기세요`;
+        rainBar.textContent = "🌧️ " + highSlots[0].hour + "시~" + highSlots[highSlots.length-1].hour + "시 강수확률 높아요 — 우산 챙기세요";
       } else if (maxRainProb >= 30) {
         rainBar.className = "rain-bar mid";
         rainBar.style.display = "block";
-        rainBar.textContent = `🌂 오늘 강수확률 최대 ${maxRainProb}% — 우산 가져가면 안심`;
+        rainBar.textContent = "🌂 오늘 강수확률 최대 " + maxRainProb + "% — 우산 가져가면 안심";
       } else {
         rainBar.style.display = "none";
       }
@@ -309,33 +373,46 @@
       const errorEl = document.getElementById("errorMsg");
       const resultsEl = document.getElementById("results");
 
-      if (isNaN(min) || isNaN(max)) { errorEl.textContent = "⚠️ 최저/최고 기온을 입력해주세요!"; errorEl.style.display = "block"; resultsEl.style.display = "none"; return; }
-      if (min >= max) { errorEl.textContent = "⚠️ 최고기온이 최저기온보다 높아야 해요!"; errorEl.style.display = "block"; resultsEl.style.display = "none"; return; }
+      if (isNaN(min) || isNaN(max)) {
+        errorEl.textContent = "⚠️ 최저/최고 기온을 입력해주세요!";
+        errorEl.style.display = "block";
+        resultsEl.style.display = "none";
+        return;
+      }
+      if (min >= max) {
+        errorEl.textContent = "⚠️ 최고기온이 최저기온보다 높아야 해요!";
+        errorEl.style.display = "block";
+        resultsEl.style.display = "none";
+        return;
+      }
       errorEl.style.display = "none";
 
       const combos = getRecommendations(min, max, wind, maxRainProb);
-      let html = `<div class="results-title">추천 코디 ${combos.length}가지</div>`;
+      let html = '<div class="results-title">추천 코디 ' + combos.length + '가지</div>';
 
-      // Umbrella card if rain expected
       if (maxRainProb >= 30) {
-        const highSlots = hourlyRainData.slice(new Date().getHours(), new Date().getHours() + 8)
-          .map((p, i) => ({ hour: (new Date().getHours() + i) % 24, prob: p }))
+        const now = new Date().getHours();
+        const highSlots = hourlyRainData.slice(now, now + 8)
+          .map((p, i) => ({ hour: (now + i) % 24, prob: p }))
           .filter(s => s.prob >= 50);
-        html += `<div class="umbrella-card">
-          <div class="umbrella-title">☂️ 우산 챙기세요</div>
-          <div class="rain-hours">
-            ${highSlots.length > 0
-              ? `${highSlots[0].hour}시~${highSlots[highSlots.length-1].hour}시 강수확률 높음`
-              : `오늘 강수확률 최대 ${maxRainProb}%`}
-            ${maxRainProb >= 50 && wardrobe.outerwear.some(i => i.waterproof) ? '<br>방수 겉옷 우선 추천했어요' : ''}
-          </div>
-        </div>`;
+        html += '<div class="umbrella-card"><div class="umbrella-title">☂️ 우산 챙기세요</div><div class="rain-hours">';
+        html += highSlots.length > 0
+          ? highSlots[0].hour + "시~" + highSlots[highSlots.length-1].hour + "시 강수확률 높음"
+          : "오늘 강수확률 최대 " + maxRainProb + "%";
+        if (maxRainProb >= 50 && wardrobe.outerwear.some(i => i.waterproof)) {
+          html += "<br>방수 겉옷 우선 추천했어요";
+        }
+        html += '</div></div>';
       }
 
-      combos.forEach(combo => {
-        html += `<div class="card"><div class="card-header"><span class="chip">${combo.label}</span>${combo.note ? `<span class="card-note">${combo.note}</span>` : ""}</div><div class="items-row"><div class="item-box"><div class="item-label">겉옷</div><div class="item-name">${combo.outer.name}</div></div><div class="item-box"><div class="item-label">하의</div><div class="item-name">${combo.bottom.name}</div></div></div></div>`;
+      combos.forEach(function(combo) {
+        html += '<div class="card"><div class="card-header"><span class="chip">' + combo.label + '</span>';
+        if (combo.note) html += '<span class="card-note">' + combo.note + '</span>';
+        html += '</div><div class="items-row"><div class="item-box"><div class="item-label">겉옷</div><div class="item-name">' + combo.outer.name + '</div></div>';
+        html += '<div class="item-box"><div class="item-label">하의</div><div class="item-name">' + combo.bottom.name + '</div></div></div></div>';
       });
-      html += `<div class="tip">💡 일교차가 클 땐 겉옷을 쉽게 벗을 수 있는 조합이 좋아요</div>`;
+
+      html += '<div class="tip">💡 일교차가 클 땐 겉옷을 쉽게 벗을 수 있는 조합이 좋아요</div>';
       resultsEl.innerHTML = html;
       resultsEl.style.display = "block";
     }
@@ -344,16 +421,18 @@
       const statusEl = document.getElementById("fetchStatus");
       try {
         const res = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max,weathercode&hourly=precipitation_probability&timezone=Asia%2FSeoul&forecast_days=1`
+          "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon +
+          "&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max,weathercode" +
+          "&hourly=precipitation_probability&timezone=Asia%2FSeoul&forecast_days=1"
         );
         if (!res.ok) throw new Error();
         const data = await res.json();
+
         const max = Math.round(data.daily.temperature_2m_max[0]);
         const min = Math.round(data.daily.temperature_2m_min[0]);
         const windMs = Math.round(data.daily.windspeed_10m_max[0] / 3.6);
         const code = data.daily.weathercode[0];
 
-        // Hourly precipitation (24 values for today)
         hourlyRainData = data.hourly.precipitation_probability.slice(0, 24);
         showHourlyRain(hourlyRainData);
 
@@ -366,7 +445,8 @@
         document.getElementById("maxTemp").value = max;
         document.getElementById("wind").value = windMs;
         document.getElementById("condition").value = cond;
-        updateRange(); updateTitle();
+        updateRange();
+        updateTitle();
 
         statusEl.className = "fetch-status success";
         statusEl.textContent = "✓ 현재 위치 날씨 불러왔어요";
@@ -382,16 +462,24 @@
       statusEl.textContent = "위치 확인 중...";
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          pos => fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude),
-          () => fetchWeatherByCoords(37.5172, 126.8665)
+          function(pos) { fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude); },
+          function() { fetchWeatherByCoords(37.5172, 126.8665); }
         );
-      } else { fetchWeatherByCoords(37.5172, 126.8665); }
+      } else {
+        fetchWeatherByCoords(37.5172, 126.8665);
+      }
     }
 
     function renderList(items, containerId, deleteFn) {
-      document.getElementById(containerId).innerHTML = items.map((item, i) =>
-        `<div class="item-row"><span>${item.name}${item.waterproof ? ' 💧' : ''}</span><div style="display:flex;align-items:center;"><span class="item-row-warmth">따뜻함 ${item.warmth}</span><button class="delete-btn" onclick="${deleteFn}(${i})">✕</button></div></div>`
-      ).join("");
+      var html = "";
+      items.forEach(function(item, i) {
+        html += '<div class="item-row"><span>' + item.name + (item.waterproof ? ' 💧' : '') + '</span>';
+        html += '<div style="display:flex;align-items:center;">';
+        html += '<span class="item-row-warmth">따뜻함 ' + item.warmth + '</span>';
+        html += '<button class="delete-btn" onclick="' + deleteFn + '(' + i + ')">✕</button>';
+        html += '</div></div>';
+      });
+      document.getElementById(containerId).innerHTML = html;
     }
 
     function openSettings() {
@@ -399,31 +487,49 @@
       editBottoms = JSON.parse(JSON.stringify(wardrobe.bottoms));
       renderList(editOuterwear, "outerList", "deleteOuter");
       renderList(editBottoms, "bottomList", "deleteBottom");
-      document.getElementById("mainView").style.display = "none"; document.getElementById("settingsPanel").style.display = "block"; window.scrollTo(0,0);
+      document.getElementById("mainView").style.display = "none";
+      document.getElementById("settingsView").style.display = "block";
+      window.scrollTo(0, 0);
     }
-    function closeSettings() { document.getElementById("settingsPanel").style.display = "none"; document.getElementById("mainView").style.display = "block"; window.scrollTo(0,0); }
-    function deleteOuter(i) { editOuterwear.splice(i, 1); renderList(editOuterwear, "outerList", "deleteOuter"); }
-    function deleteBottom(i) { editBottoms.splice(i, 1); renderList(editBottoms, "bottomList", "deleteBottom"); }
+
+    function closeSettings() {
+      document.getElementById("settingsView").style.display = "none";
+      document.getElementById("mainView").style.display = "block";
+      window.scrollTo(0, 0);
+    }
+
+    function deleteOuter(i) {
+      editOuterwear.splice(i, 1);
+      renderList(editOuterwear, "outerList", "deleteOuter");
+    }
+
+    function deleteBottom(i) {
+      editBottoms.splice(i, 1);
+      renderList(editBottoms, "bottomList", "deleteBottom");
+    }
+
     function addOuter() {
-      const name = document.getElementById("newOuterName").value.trim();
-      const warmth = parseFloat(document.getElementById("newOuterWarmth").value);
+      var name = document.getElementById("newOuterName").value.trim();
+      var warmth = parseFloat(document.getElementById("newOuterWarmth").value);
       if (!name || isNaN(warmth)) return;
-      editOuterwear.push({ name, warmth, waterproof: false });
-      editOuterwear.sort((a, b) => b.warmth - a.warmth);
+      editOuterwear.push({ name: name, warmth: warmth, waterproof: false });
+      editOuterwear.sort(function(a, b) { return b.warmth - a.warmth; });
       document.getElementById("newOuterName").value = "";
       document.getElementById("newOuterWarmth").value = "";
       renderList(editOuterwear, "outerList", "deleteOuter");
     }
+
     function addBottom() {
-      const name = document.getElementById("newBottomName").value.trim();
-      const warmth = parseFloat(document.getElementById("newBottomWarmth").value);
+      var name = document.getElementById("newBottomName").value.trim();
+      var warmth = parseFloat(document.getElementById("newBottomWarmth").value);
       if (!name || isNaN(warmth)) return;
-      editBottoms.push({ name, warmth });
-      editBottoms.sort((a, b) => b.warmth - a.warmth);
+      editBottoms.push({ name: name, warmth: warmth });
+      editBottoms.sort(function(a, b) { return b.warmth - a.warmth; });
       document.getElementById("newBottomName").value = "";
       document.getElementById("newBottomWarmth").value = "";
       renderList(editBottoms, "bottomList", "deleteBottom");
     }
+
     function saveAndClose() {
       wardrobe.outerwear = editOuterwear;
       wardrobe.bottoms = editBottoms;
