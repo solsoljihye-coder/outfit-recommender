@@ -269,7 +269,7 @@
       if (!hourlyData || hourlyData.length === 0) return;
       var now = new Date().getHours();
       var slots = [];
-      for (var i = 0; i < 8; i++) {
+      for (var i = 0; i < 16; i += 2) {
         slots.push({ hour: (now + i) % 24, prob: hourlyData[now + i] || 0 });
       }
       var gridHtml = "";
