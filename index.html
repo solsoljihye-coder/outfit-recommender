@@ -246,14 +246,29 @@ select option { background: #1a1a1a; color: #f0ece4; }
       try {
         const o = localStorage.getItem("outerwear");
         const b = localStorage.getItem("bottoms");
-        return {
-          outerwear: o ? JSON.parse(o) : DEFAULT_OUTERWEAR,
-          bottoms: b ? JSON.parse(b) : DEFAULT_BOTTOMS
-        };
+        const parsedO = o ? JSON.parse(o) : null;
+        const parsedB = b ? JSON.parse(b) : null;
+        const outerwear = (parsedO && parsedO.length > 0) ? parsedO : DEFAULT_OUTERWEAR;
+        const bottoms = (parsedB && parsedB.length > 0) ? parsedB : DEFAULT_BOTTOMS;
+        localStorage.setItem("outerwear", JSON.stringify(outerwear));
+        localStorage.setItem("bottoms", JSON.stringify(bottoms));
+        return { outerwear, bottoms };
       } catch(e) {
         return { outerwear: DEFAULT_OUTERWEAR, bottoms: DEFAULT_BOTTOMS };
       }
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     function saveWardrobe(o, b) {
       localStorage.setItem("outerwear", JSON.stringify(o));
