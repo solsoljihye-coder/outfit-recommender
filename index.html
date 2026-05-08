@@ -70,6 +70,9 @@
     .add-btn { background: rgba(200,169,126,0.15); border: 1px solid rgba(200,169,126,0.3); color: #c8a97e; border-radius: 8px; font-size: 20px; padding: 0 14px; cursor: pointer; }
     .save-btn { width: 100%; background: #c8a97e; color: #0f0f0f; border: none; border-radius: 10px; font-size: 15px; font-family: Georgia, serif; font-weight: bold; padding: 14px; cursor: pointer; margin-top: 8px; letter-spacing: 0.05em; }
     .reset-btn { width: 100%; background: transparent; color: #7a7570; border: 1px solid rgba(200,169,126,0.2); border-radius: 10px; font-size: 13px; font-family: sans-serif; padding: 10px; cursor: pointer; margin-top: 8px; }
+    .day-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
+    .day-tab { background: transparent; border: 1px solid rgba(200,169,126,0.25); border-radius: 20px; color: #7a7570; font-family: sans-serif; font-size: 13px; padding: 6px 20px; cursor: pointer; transition: all 0.2s; }
+    .day-tab.active { background: #c8a97e; color: #0f0f0f; border-color: #c8a97e; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -80,7 +83,7 @@
       <button class="settings-btn" onclick="openSettings()">⚙️</button>
     </div>
     <h1 id="title">Outfit ☀️</h1>
-    <p class="desc">based on today's weather</p>
+    <div class="day-tabs"><button class="day-tab active" id="todayTab" onclick="switchDay(0)">Today</button><button class="day-tab" id="tomorrowTab" onclick="switchDay(1)">Tomorrow</button></div>
     <div class="fetch-row">
       <span class="fetch-status" id="fetchStatus">날씨 불러오는 중...</span>
       <button class="refresh-btn" onclick="fetchWeather()">🔄 새로고침</button>
@@ -161,6 +164,9 @@
     ];
     var EMOJIS = { sunny: "☀️", partly: "⛅", cloudy: "☁️", rain: "🌧️" };
     var hourlyRainData = [];
+    var allDailyData = [];
+    var allHourlyData = [];
+    var currentDay = 0;
     var maxRainProb = 0;
 
     function loadWardrobe() {
@@ -333,21 +339,21 @@
     async function fetchWeatherByCoords(lat, lon) {
       var statusEl = document.getElementById("fetchStatus");
       try {
-        var res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max,weathercode&hourly=precipitation_probability&timezone=Asia%2FSeoul&forecast_days=1");
+        var res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max,weathercode&hourly=precipitation_probability&timezone=Asia%2FSeoul&forecast_days=2");
         if (!res.ok) throw new Error();
         var data = await res.json();
-        var max = Math.round(data.daily.temperature_2m_max[0]);
-        var min = Math.round(data.daily.temperature_2m_min[0]);
-        var windMs = Math.round(data.daily.windspeed_10m_max[0] / 3.6);
-        var code = data.daily.weathercode[0];
-        hourlyRainData = data.hourly.precipitation_probability.slice(0, 24);
-        showHourlyRain(hourlyRainData);
-        var cond = code >= 61 ? "rain" : code >= 45 ? "cloudy" : code >= 2 ? "partly" : "sunny";
-        document.getElementById("minTemp").value = min;
-        document.getElementById("maxTemp").value = max;
-        document.getElementById("wind").value = windMs;
-        document.getElementById("condition").value = cond;
-        updateRange(); updateTitle();
+        allHourlyData = data.hourly.precipitation_probability.slice(0, 48);
+        allDailyData = [0, 1].map(function(d) {
+          var code = data.daily.weathercode[d];
+          return {
+            max: Math.round(data.daily.temperature_2m_max[d]),
+            min: Math.round(data.daily.temperature_2m_min[d]),
+            wind: Math.round(data.daily.windspeed_10m_max[d] / 3.6),
+            cond: code >= 61 ? "rain" : code >= 45 ? "cloudy" : code >= 2 ? "partly" : "sunny"
+          };
+        });
+        currentDay = 0;
+        switchDay(0);
         statusEl.className = "fetch-status success";
         statusEl.textContent = "✓ 현재 위치 날씨 불러왔어요";
       } catch(e) {
@@ -427,6 +433,55 @@
     }
 
     fetchWeather();
+
+    function switchDay(day) {
+      currentDay = day;
+      document.getElementById("todayTab").className = "day-tab" + (day === 0 ? " active" : "");
+      document.getElementById("tomorrowTab").className = "day-tab" + (day === 1 ? " active" : "");
+      if (allDailyData.length === 0) return;
+      var d = allDailyData[day];
+      var hourly = allHourlyData.slice(day * 24, day * 24 + 24);
+      document.getElementById("minTemp").value = d.min;
+      document.getElementById("maxTemp").value = d.max;
+      document.getElementById("wind").value = d.wind;
+      document.getElementById("condition").value = d.cond;
+      hourlyRainData = hourly;
+      var now = day === 0 ? new Date().getHours() : 0;
+      showHourlyRainFrom(hourly, now);
+      updateRange();
+      updateTitle();
+      document.getElementById("results").style.display = "none";
+    }
+
+    function showHourlyRainFrom(hourlyData, startHour) {
+      if (!hourlyData || hourlyData.length === 0) return;
+      var slots = [];
+      for (var i = 0; i < 16; i += 2) {
+        var idx = startHour + i;
+        if (idx >= 24) break;
+        slots.push({ hour: (startHour + i) % 24, prob: hourlyData[idx] || 0 });
+      }
+      var gridHtml = "";
+      slots.forEach(function(s) {
+        gridHtml += '<div class="hour-cell"><div class="hour-time">' + s.hour + '시</div><div class="hour-prob ' + (s.prob >= 30 ? 'wet' : 'dry') + '">' + s.prob + '%</div></div>';
+      });
+      document.getElementById("hourlyGrid").innerHTML = gridHtml;
+      document.getElementById("hourlySection").style.display = "block";
+      var rainBar = document.getElementById("rainBar");
+      var highSlots = slots.filter(function(s) { return s.prob >= 50; });
+      maxRainProb = slots.length > 0 ? Math.max.apply(null, slots.map(function(s) { return s.prob; })) : 0;
+      if (highSlots.length > 0) {
+        rainBar.className = "rain-bar high";
+        rainBar.style.display = "block";
+        rainBar.textContent = "🌧️ " + highSlots[0].hour + "시~" + highSlots[highSlots.length-1].hour + "시 강수확률 높아요 — 우산 챙기세요";
+      } else if (maxRainProb >= 30) {
+        rainBar.className = "rain-bar mid";
+        rainBar.style.display = "block";
+        rainBar.textContent = "🌂 강수확률 최대 " + maxRainProb + "% — 우산 가져가면 안심";
+      } else {
+        rainBar.style.display = "none";
+      }
+    }
   </script>
 
 </body>
