@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  <meta name="apple-mobile-web-app-title" content="오늘 뭐 입지" />
-  <title>오늘 뭐 입지?</title>
+  <meta name="apple-mobile-web-app-title" content="Outfit" />
+  <title>Outfit</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -30,11 +30,12 @@
       margin-bottom: 8px;
     }
     h1 {
-      font-size: 30px;
+      font-size: 36px;
       font-weight: 400;
-      letter-spacing: -0.02em;
+      letter-spacing: 0.08em;
       text-align: center;
       margin-bottom: 6px;
+      text-transform: uppercase;
     }
     .desc {
       font-size: 13px;
@@ -114,6 +115,7 @@
       padding: 14px;
       cursor: pointer;
       margin-top: 8px;
+      letter-spacing: 0.05em;
     }
     .recommend-btn:active { background: #b8996e; }
     .error-msg {
@@ -190,9 +192,9 @@
 </head>
 <body>
   <div class="container">
-    <div class="subtitle">Sol의 옷장</div>
-    <h1 id="title">오늘 뭐 입지? ☀️</h1>
-    <p class="desc">날씨 입력하면 겉옷 + 하의 추천해드려요</p>
+    <div class="subtitle">SOL</div>
+    <h1 id="title">Outfit ☀️</h1>
+    <p class="desc">based on today's weather</p>
 
 ```
 <div class="fetch-row">
@@ -230,7 +232,7 @@
 <div class="range-bar" id="rangeBar" style="display:none"></div>
 <div class="error-msg" id="errorMsg" style="display:none"></div>
 
-<button class="recommend-btn" onclick="recommend()">오늘 코디 추천받기 →</button>
+<button class="recommend-btn" onclick="recommend()">GET DRESSED →</button>
 
 <div class="results" id="results" style="display:none"></div>
 ```
@@ -327,7 +329,7 @@
 
     function updateTitle() {
       const cond = document.getElementById("condition").value;
-      document.getElementById("title").textContent = "오늘 뭐 입지? " + EMOJIS[cond];
+      document.getElementById("title").textContent = "Outfit " + EMOJIS[cond];
     }
 
     function updateRange() {
@@ -393,13 +395,11 @@
       resultsEl.style.display = "block";
     }
 
-    async function fetchWeather() {
+    async function fetchWeatherByCoords(lat, lon) {
       const statusEl = document.getElementById("fetchStatus");
-      statusEl.className = "fetch-status";
-      statusEl.textContent = "날씨 불러오는 중...";
       try {
         const res = await fetch(
-          "https://api.open-meteo.com/v1/forecast?latitude=37.5172&longitude=126.8665&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max,weathercode&timezone=Asia%2FSeoul&forecast_days=1"
+          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max,weathercode&timezone=Asia%2FSeoul&forecast_days=1`
         );
         if (!res.ok) throw new Error();
         const data = await res.json();
@@ -421,10 +421,30 @@
         updateTitle();
 
         statusEl.className = "fetch-status success";
-        statusEl.textContent = "✓ 오늘 양천구 날씨 불러왔어요";
+        statusEl.textContent = "✓ 현재 위치 날씨 불러왔어요";
       } catch (e) {
         statusEl.className = "fetch-status error";
         statusEl.textContent = "날씨 불러오기 실패 — 직접 입력해주세요";
+      }
+    }
+
+    function fetchWeather() {
+      const statusEl = document.getElementById("fetchStatus");
+      statusEl.className = "fetch-status";
+      statusEl.textContent = "위치 확인 중...";
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude);
+          },
+          () => {
+            // 위치 거부시 서울 양천구 기본값
+            fetchWeatherByCoords(37.5172, 126.8665);
+          }
+        );
+      } else {
+        fetchWeatherByCoords(37.5172, 126.8665);
       }
     }
 
