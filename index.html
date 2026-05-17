@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -212,21 +211,33 @@
     function getRecommendations(minTemp, maxTemp, windSpeed, rainProb) {
       var wind = parseFloat(windSpeed) || 0;
       var rain = parseFloat(rainProb) || 0;
-      var feelFactor = wind > 4 ? -2 : wind > 2 ? -1 : 0;
-      var adjustedMin = minTemp + feelFactor;
-      var adjustedMax = maxTemp + feelFactor;
-      var avg = (adjustedMin + adjustedMax) / 2;
       var range = maxTemp - minTemp;
+
+      // 아침 체감 기온: 최저 60% + 최고 40% (새벽 최저보다 높은 아침 기온 반영)
+      var morningTemp = minTemp * 0.6 + maxTemp * 0.4;
+
+      // 바람 보정은 아침 체감 기온에 적용
+      var feelFactor = wind > 4 ? -2 : wind > 2 ? -1 : 0;
+      var adjustedMorning = morningTemp + feelFactor;
+
+      // 최고기온이 높으면 겉옷 두께 낮춤 (낮에 너무 더운 것 방지)
+      var maxPenalty = maxTemp >= 27 ? -2 : maxTemp >= 23 ? -1 : 0;
       var outerScore, bottomScore;
 
-      if (adjustedMin <= 5) outerScore = 9;
-      else if (adjustedMin <= 8) outerScore = 8.5;
-      else if (adjustedMin <= 11) outerScore = 7.5;
-      else if (adjustedMin <= 14) outerScore = 6.5;
-      else if (adjustedMin <= 17) outerScore = 5;
-      else if (adjustedMin <= 20) outerScore = 3;
+      if (adjustedMorning <= 5) outerScore = 9;
+      else if (adjustedMorning <= 8) outerScore = 8.5;
+      else if (adjustedMorning <= 11) outerScore = 7.5;
+      else if (adjustedMorning <= 14) outerScore = 6.5;
+      else if (adjustedMorning <= 17) outerScore = 5;
+      else if (adjustedMorning <= 20) outerScore = 3;
       else outerScore = 2;
 
+      // 최고기온에 따라 outerScore 직접 덮어쓰기
+      if (maxTemp >= 27) outerScore = 2.5;  // 반팔 재킷 / 얇은 반팔 재킷
+      else if (maxTemp >= 24) outerScore = 3.5; // 반팔 재킷
+      else outerScore = Math.max(1, outerScore + maxPenalty);
+
+      var avg = (minTemp + maxTemp) / 2;
       if (avg <= 8) bottomScore = 9;
       else if (avg <= 12) bottomScore = 8;
       else if (avg <= 16) bottomScore = 6.5;
@@ -250,7 +261,7 @@
       var combos = [];
 
       combos.push({ label: range >= 13 ? "아침 외출 추천" : "기본 추천", outer: outers[0], bottom: bottoms[0], note: mainNote });
-      if (outers[1] && range >= 10) combos.push({ label: "낮 기온 고려", outer: outers[1], bottom: bottoms[0], note: "낮엔 벗어도 OK" });
+      if (outers[1] && range >= 10) combos.push({ label: "다른 옵션", outer: outers[1], bottom: bottoms[0], note: null });
       if (bottoms[1]) combos.push({ label: "활동적인 날", outer: outers[0], bottom: bottoms[1], note: null });
       return combos;
     }
@@ -483,6 +494,5 @@
       }
     }
   </script>
-
 </body>
 </html>
